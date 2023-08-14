@@ -35,7 +35,7 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const dataUser = req.body;
     const user = await prisma.usuarios.create({
-      data: dataUser,
+      data: dataUser
     });
     res.status(200).json({ data: user });
   } catch (err) {
@@ -72,3 +72,54 @@ export const deleteUser = async (req: Request, res: Response) => {
     console.log(err);
   }
 };
+
+
+//rota para favoritar uma casa
+
+export const FavoriteHome = async(req : Request,res : Response)=>{
+
+  const {usuarioId, casaId} = req.body
+
+  try {
+    const usuario = await prisma.usuarios.update({
+      where: { id: usuarioId },
+      data: {
+        Favoritos: {
+          connect: { id: casaId }
+        }
+      }
+    });
+
+    res.json(usuario);
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Erro ao marcar casa como favorita.' });
+  }
+}
+
+//rotas para buscar todas as casas favoritas de um certo usuario
+
+export const allFavorites = async(req : Request ,res : Response)=>{
+
+  const {id} = req.params
+
+  try{
+   
+    const usuario = await prisma.usuarios.findUnique({
+      where : {id : id},
+      include : {Favoritos : true}
+    })
+
+     res.status(200).json(usuario.Favoritos)
+  }
+  catch(error){
+    res.status(500).json({error : 'Erro ao buscar casas favoritas.'})
+  }
+ 
+   
+
+ 
+
+
+
+}

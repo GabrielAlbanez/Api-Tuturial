@@ -20,17 +20,11 @@ Favoritos Casas[]
 }
 
 model Casas {
-  id          String    @id @default(uuid())
-  Usuarios    Usuarios  @relation(fields: [usuarioId], references: [id])
-  usuarioId   String
-  name        String
-  imagensCasa imgsCasa[] // Definindo a relação um-para-muitos
+  id        String    @id @default(uuid())
+  Usuarios  Usuarios?  @relation(fields: [usuarioId], references: [id])
+  usuarioId String?
+  name      String
+  imagens   String    // Campo para armazenar URLs de imagens como JSON
 }
 
-model imgsCasa {
-  id         String   @id @default(uuid())
-  url        String
-  casa       Casas    @relation(fields: [casaId], references: [id]) // Relação inversa
-  casaId     String   // Campo para armazenar o ID da casa relacionada
 
-}
