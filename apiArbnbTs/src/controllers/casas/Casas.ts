@@ -34,11 +34,15 @@ export const getByIdHomes = async (req: Request, res: Response) => {
 export const createHome = async(req : Request, res : Response)=>{
   
     try {
-        const { name, imagens } = req.body;
+        const { name, imagens,price,local,pais,avaiation } = req.body;
         const Home = await prisma.casas.create({
             data : {
                 name : name,
-                imagens : JSON.stringify(imagens)
+                imagens : JSON.stringify(imagens),
+                price,
+                Local : local,
+                avaiation : avaiation,
+                pais : pais
             } 
         })
         res.status(201).json(Home)
@@ -54,14 +58,18 @@ export const updateHome = async(req : Request, res : Response)=>{
   
     try {
         const homeID = req.params.id
-        const { name, imagens } = req.body;
+        const { name, imagens,price,local,pais,avaiation } = req.body;
         const Home = await prisma.casas.update({
           where : {
             id : homeID
           },
           data : {
             name : name,
-            imagens : JSON.stringify(imagens)
+                imagens : JSON.stringify(imagens),
+                price,
+                Local : local,
+                avaiation : avaiation,
+                pais : pais
         } 
         })
         res.status(201).json(Home)

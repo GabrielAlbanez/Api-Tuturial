@@ -25,6 +25,11 @@ model Casas {
   usuarioId String?
   name      String
   imagens   String    // Campo para armazenar URLs de imagens como JSON
+  price     Float
+  avaiation Float
+  pais      String
+  Local     String
+  
 }
 
 
