@@ -1,5 +1,9 @@
 import { db as prisma } from "../../shared/db";
 import { Request, Response } from "express";
+import * as bcrypt from 'bcrypt';
+import * as jwt from "jsonwebtoken"
+
+
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -33,9 +37,15 @@ export const getByIdUser = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const dataUser = req.body;
+    const { name, email, cpf, senha } = req.body;
+    const hashedPassword = await bcrypt.hash(senha, 5)
     const user = await prisma.usuarios.create({
-      data: dataUser
+      data: {
+        name: name,
+        email: email,
+        cfp: cpf,
+        senha: hashedPassword,
+      }
     });
     res.status(200).json({ data: user });
   } catch (err) {
@@ -76,9 +86,9 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 //rota para favoritar uma casa
 
-export const FavoriteHome = async(req : Request,res : Response)=>{
+export const FavoriteHome = async (req: Request, res: Response) => {
 
-  const {usuarioId, casaId} = req.body
+  const { usuarioId, casaId } = req.body
 
   try {
     const usuario = await prisma.usuarios.update({
@@ -97,28 +107,59 @@ export const FavoriteHome = async(req : Request,res : Response)=>{
   }
 }
 
-//rotas para buscar todas as casas favoritas de um certo usuario
+export const removeFavorite = async (req: Request, res: Response) => {
 
-export const allFavorites = async(req : Request ,res : Response)=>{
+  const { usuarioId, casaId } = req.body
 
-  const {id} = req.params
+  try {
 
-  try{
-   
-    const usuario = await prisma.usuarios.findUnique({
-      where : {id : id},
-      include : {Favoritos : true}
+    await prisma.usuarios.update({
+      where: { id: usuarioId },
+      data: {
+        Favoritos: {
+          disconnect: { id: casaId }
+        }
+      }
     })
 
-     res.status(200).json(usuario.Favoritos)
-  }
-  catch(error){
-    res.status(500).json({error : 'Erro ao buscar casas favoritas.'})
-  }
- 
-   
+    res.status(200).json({ message: `casa desmarcada` })
 
- 
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Erro ao desmarcar casa como favorita.' });
+  }
+
+}
+
+
+
+//rotas para buscar todas as casas favoritas de um certo usuario
+
+export const allFavorites = async (req: Request, res: Response) => {
+
+  const { id } = req.params
+
+  try {
+
+    const usuario = await prisma.usuarios.findUnique({
+      where: { id: id },
+      include: { Favoritos: true }
+    })
+
+    res.status(200).json(usuario.Favoritos)
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar casas favoritas.' })
+  }
+
+
+
+
+
+
+
+
+
 
 
 
