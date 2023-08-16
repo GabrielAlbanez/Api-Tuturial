@@ -6,7 +6,10 @@ import * as jwt from "jsonwebtoken"
 declare module 'express' {
     interface Request {
       user?: any; // Aqui você pode usar o tipo correto se souber qual é, em vez de 'any'
+      token?:any
     }
+
+
   }
   
 
@@ -70,6 +73,7 @@ export const authLogin = async (req: Request, res: Response, next: NextFunction)
     try{
      const decode : any = jwt.verify(generateToken,"8080")
      req.user = decode
+     req.token = generateToken
 
     }
     catch(error){
