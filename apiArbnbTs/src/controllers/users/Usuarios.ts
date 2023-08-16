@@ -137,12 +137,12 @@ export const removeFavorite = async (req: Request, res: Response) => {
 
 export const allFavorites = async (req: Request, res: Response) => {
 
-  const { id } = req.params
+  const email = req.query.email as string
 
   try {
 
     const usuario = await prisma.usuarios.findUnique({
-      where: { id: id },
+      where: { email: email },
       include: { Favoritos: true }
     })
 
@@ -152,15 +152,26 @@ export const allFavorites = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Erro ao buscar casas favoritas.' })
   }
 
+}
 
 
+export const updatePassword = async (req: Request, res: Response) => {
 
+  const { email, senha } = req.body
+  const hashedPassword = await bcrypt.hash(senha, 5)
+  
+  try{
+  
+    await prisma.usuarios.update({
+      where: { email: email },
+      data: { senha: hashedPassword }
+    })
 
+    res.status(200).json({ message : "senha atualizada com sucesso"})
 
-
-
-
-
-
+  }
+  catch(erro){
+    res.status(500).json({ error: 'Erro ao atualizar senha.' })
+  }
 
 }
