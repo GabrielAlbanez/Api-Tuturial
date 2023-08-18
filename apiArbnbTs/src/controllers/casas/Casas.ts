@@ -34,7 +34,7 @@ export const getByIdHomes = async (req: Request, res: Response) => {
 export const createHome = async(req : Request, res : Response)=>{
   
     try {
-        const { name, imagens,price,local,pais,avaiation } = req.body;
+        const { name, imagens, price ,local ,pais, avaiation } = req.body;
         const Home = await prisma.casas.create({
             data : {
                 name : name,
